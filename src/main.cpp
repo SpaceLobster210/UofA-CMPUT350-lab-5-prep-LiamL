@@ -4,8 +4,7 @@
 #include <memory>
 #include <random>
 #include <vector>
-#include <math>
-#include <numbers>
+#include <cmath>
 
 #include <SFML/Graphics.hpp>
 
@@ -36,54 +35,54 @@ void handleInput(sf::Window& window, bool& shouldQuit) {
         //  with different alternate tween functions.
         //  Credit to https://easings.net/#
         // ====== ====== ======
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::1)) { // Normal lerp
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num1)) { // Normal lerp
             tween = [](float a, float b, float t) {
                 return (1 - t) * a + t * b;
             };
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::2)) { // t^2 ease in
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num2)) { // t^2 ease in
             tween = [](float a, float b, float t) {
                 float mix = t*t;
                 return (1 - mix) * a + mix * b;
             };
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::3)) { // t^3 ease in
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num3)) { // t^3 ease in
             tween = [](float a, float b, float t) {
                 float mix = t*t*t;
                 return (1 - mix) * a + mix * b;
             };
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::4)) { // Sin ease in
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num4)) { // Sin ease in
             tween = [](float a, float b, float t) {
-                float mix = 1 - std::cos((t * std::pi) / 2);
+                float mix = 1 - std::cos((t * M_PI) / 2);
                 return (1 - mix) * a + mix * b;
             };
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::5)) { // Sin ease out
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num5)) { // Sin ease out
             tween = [](float a, float b, float t) {
-                float mix = std::sin((t * std::pi) / 2);
+                float mix = std::sin((t * M_PI) / 2);
                 return (1 - mix) * a + mix * b;
             };
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::6)) { // Sin ease in/out
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num6)) { // Sin ease in/out
             tween = [](float a, float b, float t) {
-                float mix = (1 - std::cos(t * std::pi)) / 2;
+                float mix = (1 - std::cos(t * M_PI)) / 2;
                 return (1 - mix) * a + mix * b;
             };
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::7)) { // t^2 ease in/out
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num7)) { // t^2 ease in/out
             tween = [](float a, float b, float t) {
                 float mix = ((1 - t) * (t*t)) + (t * (1 - ((1-t)*(1-t))));
                 return (1 - mix) * a + mix * b;
             };
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::8)) { // t^3 ease in/out
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num8)) { // t^3 ease in/out
             tween = [](float a, float b, float t) {
                 float mix = ((1 - t) * (t*t*t)) + (t * (1 - ((1-t)*(1-t)*(1-t))));
                 return (1 - mix) * a + mix * b;
             };
         }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::9)) { // ease in back
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Num9)) { // ease in back
             tween = [](float a, float b, float t) {
                 float mix = 2.70158f * t*t*t - 1.70158f * t*t;
                 return (1 - mix) * a + mix * b;
@@ -101,7 +100,7 @@ void render(sf::RenderWindow& window) {
     // Movement should be governed by the tween function.
     // ====== ====== ======
     sf::CircleShape circleMain;
-    circleMain.setPosition({tween(0, WINDOW_WIDTH, curFrame / FRAMES_PER_ANIM), WINDOW_HEIGHT / 3;});
+    circleMain.setPosition({tween(0, WINDOW_WIDTH, curFrame / FRAMES_PER_ANIM), WINDOW_HEIGHT / 3});
     circleMain.setFillColor(sf::Color(0, 255, 255));
     window.draw(circleMain);
 
@@ -117,8 +116,8 @@ void render(sf::RenderWindow& window) {
 
     sf::RectangleShape boundingLine1({graphWidth, 2});
     sf::RectangleShape boundingLine2({2, graphHeight});
-    boundingLine1.setPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT - GRAPH_BORDER);
-    boundingLine2.setPosition(GRAPH_BORDER, WINDOW_HEIGHT - ((WINDOW_HEIGHT / 6) + (GRAPH_BORDER / 2)));
+    boundingLine1.setPosition(sf::Vector2f{ WINDOW_WIDTH / 2.0f, static_cast<float>(WINDOW_HEIGHT) - GRAPH_BORDER });
+    boundingLine2.setPosition(sf::Vector2f{ static_cast<float>(GRAPH_BORDER), WINDOW_HEIGHT - ((WINDOW_HEIGHT / 6.0f) + (GRAPH_BORDER / 2.0f)) });
     window.draw(boundingLine1);
     window.draw(boundingLine2);
 
@@ -128,7 +127,7 @@ void render(sf::RenderWindow& window) {
 
     sf::CircleShape graphDot;
     if (curFrame == 0) { // Cover edge case of dot where frame is 0
-        graphDot.setPosition((GRAPH_BORDER), (WINDOW_HEIGHT - (GRAPH_BORDER) + prevVal));
+        graphDot.setPosition(sf::Vector2f{ static_cast<float>(GRAPH_BORDER), (WINDOW_HEIGHT - (GRAPH_BORDER) + prevVal) });
     }
 
     for (int fr = 1; fr <= FRAMES_PER_ANIM; fr++) {
@@ -139,14 +138,14 @@ void render(sf::RenderWindow& window) {
 
         // Draw the line segment
         sf::RectangleShape lineSegment({dist, 1});
-        lineSegment.setPosition((GRAPH_BORDER + (((2 * fr) - 1) * (lineUnit / 2))), (WINDOW_HEIGHT - (GRAPH_BORDER + prevVal + ((curVal - prevVal) / 2))));
-        lineSegment.setRotation(sf::degrees(angle * 180 / std::pi));
+        lineSegment.setPosition(sf::Vector2f{ (GRAPH_BORDER + (((2 * fr) - 1) * (lineUnit / 2))), (WINDOW_HEIGHT - (GRAPH_BORDER + prevVal + ((curVal - prevVal) / 2))) });
+        lineSegment.setRotation(sf::degrees(angle * 180 / M_PI));
         lineSegment.setFillColor(sf::Color(0, 255, 255));
         window.draw(lineSegment);
 
         // mark position of dot on line
         if (curFrame == fr) {
-            graphDot.setPosition((GRAPH_BORDER + fr * lineUnit), (WINDOW_HEIGHT - (GRAPH_BORDER) + curVal));
+            graphDot.setPosition(sf::Vector2f{ (GRAPH_BORDER + fr * lineUnit), (WINDOW_HEIGHT - (GRAPH_BORDER) + curVal) });
         }
 
         prevVal = curVal;
@@ -155,7 +154,7 @@ void render(sf::RenderWindow& window) {
     graphDot.setFillColor(sf::Color(255, 216, 0));
     window.draw(graphDot);
     
-    curFrame += 1
+    curFrame += 1;
     if (curFrame > FRAMES_PER_ANIM) {
         curFrame = 0;
     }
